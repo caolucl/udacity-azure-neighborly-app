@@ -1,0 +1,12 @@
+{
+  "scriptFile": "__init__.py",
+  "bindings": [
+    {
+      "type": "eventGridTrigger",
+      "name": "event",
+      "direction": "in",
+      "eventHubName": "dev", 
+      "connection": "Endpoint=sb://udacityneighborlylcao.servicebus.windows.net/;SharedAccessKeyName=dev;SharedAccessKey=F5Wdpm1NbFjKYg2woOY+SO9ZeSCp4HGa6+AEhMjT0YE=;EntityPath=dev"
+    }
+  ]
+}

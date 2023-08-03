@@ -1,0 +1,197 @@
+data:
+  AzureWebJobsStorage: RGVmYXVsdEVuZHBvaW50c1Byb3RvY29sPWh0dHBzO0FjY291bnROYW1lPWx1Y2N2ZnB0c3RvcmFnZWFjY291bnQ7QWNjb3VudEtleT01eXhkRit5TjcxMTFsb3VuMnJaR3h0SXlLMmNtYmJ1S3NGTmg2RXl5WHlmdkF4RkxLWFVmang5UC9JbGc2b1A0c20zaGNCalVJM1F6K0FTdEJvd3lzUT09O0VuZHBvaW50U3VmZml4PWNvcmUud2luZG93cy5uZXQ=
+  FUNCTIONS_WORKER_RUNTIME: cHl0aG9u
+  ConnectionStrings: bW9uZ29kYjovL2F6dXJlY29zbW9zZGJsYWIyOnBTblRzZ1RDMDRYU1ZPVWE1QndKNXFNM1F6S2VldWZZTkZZTFNyS0VqSWRockZDdjlhN0hFNDV2ZTVReFlBaTJwNXl4bnVkQmFydk5BQ0RiUWlmV1B3PT1AYXp1cmVjb3Ntb3NkYmxhYjIubW9uZ28uY29zbW9zLmF6dXJlLmNvbToxMDI1NS8/c3NsPXRydWUmcmVwbGljYVNldD1nbG9iYWxkYiZyZXRyeXdyaXRlcz1mYWxzZSZtYXhJZGxlVGltZU1TPTEyMDAwMCZhcHBOYW1lPUBhenVyZWNvc21vc2RibGFiMkA=
+apiVersion: v1
+kind: Secret
+metadata:
+  name: luccvfptfunctionapp
+---
+data:
+  host.master: TUFacG1IdXBkbGNvZ2l6dWNTOVNDOE5PNnotRTlBcllMRlU5Ml82bnNWZVZBekZ1bTdRVU5BPT0=
+  host.function.default: RmE4U1FjRnpvSVR3ajd4ZGs1eV9nMU1GRGJXYU9JWVBWOV9uUzRLdGkzbGFBekZ1VGlLWkFnPT0=
+  host.systemKey.default: d05tQlQ0TFhhOXJ1SFZrd1pfWGU2TlZOZGFHQnlMajcwZVhWMmhQSVJDWDBBekZ1WmFKdnJ3PT0=
+  functions.createadvertisement.default: TUtWVDh2Vm5kQVdtazl4enl4OGlqcEJ6M3FDQzNZMEdRdDF1UkFhemxMLUxBekZ1NmZ1MEd3PT0=
+  functions.getadvertisements.default: b0ZJYjNjSWFETlRGdkdPTXE3bWpsQ3NTRkU2aUpDVjNYVUtrc05EQ1ZJX2xBekZ1YjVlZWZRPT0=
+  functions.updateadvertisement.default: ZGpQam9VUmhJVVhNZVZnSmtZZU94YkJUVV81OHQ2cldTT2Y4ZzNFODVLdnRBekZ1UHpyRHFBPT0=
+  functions.getposts.default: aEVXLXJZLWMzMkY0TEotVTdhcmF6WGl2MjdyWmpIb25ibUxNbnpNa0pjeG1BekZ1WnpaOERBPT0=
+  functions.deleteadvertisement.default: ZjgyUjFxSF9pbUZaaFRHcDdkcEJaWmJCVEpZT2prWmpiVk9rS1BJQUdYSjRBekZ1NWFOSW5BPT0=
+  functions.getpost.default: d0I1eXFrSDZtLUR3U3hiMnBMTlpMRlExSjg0Ynh5dVFBd0ZJSl9TeE9kU0RBekZ1ZFRjUFN3PT0=
+  functions.getadvertisement.default: ZXpsZzkxT3lubldxVlh2TDZhMlpFdndITDk3UTQ5SVZxNl82NUZxVVFkTXdBekZ1R0tNV2NBPT0=
+apiVersion: v1
+kind: Secret
+metadata:
+  name: func-keys-kube-secret-luccvfptfunctionapp
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: luccvfptfunctionapp-function-keys-identity-svc-act
+---
+rules:
+- apiGroups:
+  - ''
+  resources:
+  - secrets
+  - configMaps
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: functions-keys-manager-role
+---
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: functions-keys-manager-role
+subjects:
+- kind: ServiceAccount
+  name: luccvfptfunctionapp-function-keys-identity-svc-act
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: luccvfptfunctionapp-function-keys-identity-svc-act-functions-keys-manager-rolebinding
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: luccvfptfunctionapp-http
+spec:
+  selector:
+    app: luccvfptfunctionapp-http
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: luccvfptfunctionapp-http
+  labels:
+    app: luccvfptfunctionapp-http
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: luccvfptfunctionapp-http
+  template:
+    metadata:
+      labels:
+        app: luccvfptfunctionapp-http
+    spec:
+      containers:
+      - name: luccvfptfunctionapp-http
+        image: luccvfptacr.azurecr.io/luccvfptfunctionapp:latest
+        ports:
+        - containerPort: 80
+        env:
+        - name: AzureFunctionsJobHost__functions__0
+          value: createAdvertisement
+        - name: AzureFunctionsJobHost__functions__1
+          value: getAdvertisements
+        - name: AzureFunctionsJobHost__functions__2
+          value: updateAdvertisement
+        - name: AzureFunctionsJobHost__functions__3
+          value: getPosts
+        - name: AzureFunctionsJobHost__functions__4
+          value: deleteAdvertisement
+        - name: AzureFunctionsJobHost__functions__5
+          value: getPost
+        - name: AzureFunctionsJobHost__functions__6
+          value: getAdvertisement
+        - name: AzureWebJobsSecretStorageType
+          value: kubernetes
+        - name: AzureWebJobsKubernetesSecretName
+          value: secrets/func-keys-kube-secret-luccvfptfunctionapp
+        envFrom:
+        - secretRef:
+            name: luccvfptfunctionapp
+        readinessProbe:
+          failureThreshold: 3
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 240
+          httpGet:
+            path: /
+            port: 80
+            scheme: HTTP
+        startupProbe:
+          failureThreshold: 3
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 240
+          httpGet:
+            path: /
+            port: 80
+            scheme: HTTP
+      serviceAccountName: luccvfptfunctionapp-function-keys-identity-svc-act
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: luccvfptfunctionapp
+  labels:
+    app: luccvfptfunctionapp
+spec:
+  selector:
+    matchLabels:
+      app: luccvfptfunctionapp
+  template:
+    metadata:
+      labels:
+        app: luccvfptfunctionapp
+    spec:
+      containers:
+      - name: luccvfptfunctionapp
+        image: luccvfptacr.azurecr.io/luccvfptfunctionapp:latest
+        env:
+        - name: AzureFunctionsJobHost__functions__0
+          value: EventGridTrigger
+        envFrom:
+        - secretRef:
+            name: luccvfptfunctionapp
+        readinessProbe:
+          failureThreshold: 3
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 240
+          httpGet:
+            path: /
+            port: 80
+            scheme: HTTP
+        startupProbe:
+          failureThreshold: 3
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 240
+          httpGet:
+            path: /
+            port: 80
+            scheme: HTTP
+      serviceAccountName: luccvfptfunctionapp-function-keys-identity-svc-act
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: luccvfptfunctionapp
+  labels: {}
+spec:
+  scaleTargetRef:
+    name: luccvfptfunctionapp
+  triggers:
+  - type: eventgridtrigger
+    metadata:
+      direction: in
+      eventHubName: dev
+      connection: Endpoint=sb://udacityneighborlylcao.servicebus.windows.net/;SharedAccessKeyName=dev;SharedAccessKey=F5Wdpm1NbFjKYg2woOY+SO9ZeSCp4HGa6+AEhMjT0YE=;EntityPath=dev
+---
+
